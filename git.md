@@ -91,4 +91,38 @@
 检查到一个文件被修改，一个新添加文件。下面提交这两个文件：
 
     git add git.md test.md
+    git commit -m "modified git.md and test.md"
+
+![l7Z7F0.png](https://s2.ax1x.com/2020/01/13/l7Z7F0.png)
+
+如果要跟踪的文件很多，可以用
+
+    git add .
+
+全部添加到缓冲区。
+
+### 4.4 版本回退
+用 git log 可以查看提交记录。如果要回退到前面的版本，可以用命令：
+
+    git checkout <commit-hash>
+
+将<commit-hash>替换成在git log中显示的某个版本的码号。若要回到最新版本，输入命令
+
+    git checkout master
+
+## 5. 分支 (Branches)
+分支可以解释为项目提交的独立时间线。使用Git，我们可以创建很多分支，实现不同版本的项目并行跟踪，不会影响项目的稳定版本（一般在master分支）。
+
+### 5.1 创建分支
+当创建一个仓库，开始提交文件，默认保存在master分支。用下面的命令可以创建一个新分支。
+
+    git branch <new-branch-name>
+
+新分支引用当前版本的仓库。
+
+
+
+
+
+
 
