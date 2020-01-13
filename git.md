@@ -47,3 +47,48 @@
 
 ![l7FrXn.png](https://s2.ax1x.com/2020/01/13/l7FrXn.png)
 
+现在是空的，假如我把git.md文档放到目录下，再检查状态：
+
+![l7Fxcd.png](https://s2.ax1x.com/2020/01/13/l7Fxcd.png)
+
+检查到了这个文件，但提示没有提交。
+
+### 4.2 暂存文件
+
+我们可以用 git add 把它放到暂存区（staging area）：
+
+    git add git.md 
+
+若添加多个文件，可以这样
+
+    git add file.txt file1.txt file3.txt
+
+![l7kwE6.png](https://s2.ax1x.com/2020/01/13/l7kwE6.png)
+
+### 4.3 提交
+当我们用 git add 把所有想要跟踪的文件都放到缓存区后，就可以提交了。用下面的命令：
+
+    git commit -m "Commit message"
+
+双引号里是输入一些文字说明，记录本次提交做了哪些修改等。
+
+![l7AdMj.png](https://s2.ax1x.com/2020/01/13/l7AdMj.png)
+
+到这里，恭喜你已经成功的完成了项目的一次提交！
+
+再次输入 git status 查看状态，显示 "nothing to commit, working tree clean"。此时，输入
+
+    git log
+
+能够看到提交记录。
+
+![l7AXyd.png](https://s2.ax1x.com/2020/01/13/l7AXyd.png)
+
+如果在路径下添加了一个新文件 test.md, 同时，git.md这个文件也发生了修改。我们再用 git status 查看状态：
+
+![l7ZNRO.png](https://s2.ax1x.com/2020/01/13/l7ZNRO.png)
+
+检查到一个文件被修改，一个新添加文件。下面提交这两个文件：
+
+    git add git.md test.md
+
