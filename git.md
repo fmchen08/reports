@@ -118,9 +118,29 @@
 
     git branch <new-branch-name>
 
-新分支引用当前版本的仓库。
+![l7KKbQ.png](https://s2.ax1x.com/2020/01/13/l7KKbQ.png)
 
+### 5.2 切换分支
+执行下面命令：
 
+    git checkout <branch-name>
+
+切换到<branch-name>分支，如果是一个新分支，则引用当前版本的仓库。
+
+![l7KLqg.png](https://s2.ax1x.com/2020/01/13/l7KLqg.png)
+
+在新分支中，可以尝试一些新想法，不影响master分支。
+
+### 5.3 合并分支
+当测试成功后，可以把两个分支合并：
+
+    git merge <branch-name>
+
+你可以把<branch-name>替换成与当前分支合并的分支。
+
+### 5.4 删除分支
+
+    git branch -d <branch-name>
 
 
 
