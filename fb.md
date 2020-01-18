@@ -140,8 +140,8 @@ Overall, it was found that several specific eye shape features correlate with at
 Regarding the female eye, there exist distinct periorbital anatomic features and landmarks which contribute to a youthful appearance and attractiveness. Knowledge regarding these facts may serve as an important guideline for pre- and post-operative patient analysis.
 
 
-# 3. Facial Beauty Analysis by Generation
-## 3.1 Beholder GAN: Generation and Beautification of Facial Images with Conditioning on Their Beauty Level
+## 3. Facial Beauty Analysis by Generation
+### 3.1 Beholder GAN: Generation and Beautification of Facial Images with Conditioning on Their Beauty Level
 https://arxiv.org/pdf/1902.02593.pdf
 
 
@@ -156,7 +156,7 @@ arXiv:1902.02593 [cs.CV]
 
 Code :  https://github.com/beholdergan/Beholder-GAN. 
 
-## 3.2 Beauty Learning and Counterfactual Inference
+### 3.2 Beauty Learning and Counterfactual Inference
 http://openaccess.thecvf.com/content_CVPRW_2019/papers/Explainable%20AI/Li_Beauty_Learning_and_Counterfactual_Inference_CVPRW_2019_paper.pdf
 
 Tao Li; The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, 2019, pp. 111-113 
