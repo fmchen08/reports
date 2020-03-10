@@ -1,4 +1,4 @@
-# 实验1 Linux初体验
+# 实验1 Linux基础
 ## 1. 虚拟机安装 Ubuntu18.04 LTS
 - 下载Ubuntu18.04 LTS，官网速度慢，用网易镜像
   http://mirrors.163.com/ubuntu-releases/18.04/
