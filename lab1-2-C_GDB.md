@@ -85,3 +85,8 @@ If you name your executable fubar, and call it with the command ./fubar a b c, i
     argv[1] = a
     argv[2] = b
     argv[3] = c
+
+## 4. GDB
+GNU Project Debugger
+是一个命令行工具。
+退出：quit(q)
