@@ -1,4 +1,45 @@
 # Linux下的C语言编程与调试
+## 1. Unbuntu 18.04更改apt成阿里云软件源
+### 
+（1）首先备份Ubuntu系统的官方源文件。打开Ubuntu的命令终端，进入源文件 sources.list 所在的目录，然后执行备份命令，执行 sudo cp sources.list sources.list.backup 对源文件内容进行备份。
+  
+    cd /etc/apt
+    sudo cp sources.list sources.list.backup
+
+（2）将 sources.list 源文件内容替换成：
+
+    deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+
+这里，要用 
+
+    sudo gedit sources.list
+
+打开 -> 编辑 -> 保存 -> 关闭文件。
+
+（3）更新源
+
+    sudo apt-get update
+
+
+## 2. 安装GCC
+
+    sudo apt-get install gcc
+
+安装过程中，如果遇到 Could not get lock /var/lib/dpkg/lock-frontend -open(11: Resource tenporarily unavailable)错误，是因为有之前的apt进程没退出，解决方法是删除锁定文件
+
+    sudo rm /var/lib/dpkg/lock-frontend
+    sudo rm /var/lib/dpkg/lock
+
+
 ## 3. 命令行参数：int argc, char* argv[]
 So far, all the programs we have written can be run with a single command. For example, if we compile an executable called myprog, we can run it from within the same directory with the following command at the GNU/Linux command line: 
 
