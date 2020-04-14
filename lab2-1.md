@@ -43,3 +43,236 @@
 - 通过从父进程继承。
 
 后一种方法允许子进程同样能够访问由父进程使用的文件。文件描述符对于每个进程一般是唯一的。当用fork创建某个子进程时，该子进程会获得其父进程所有文件描述符的副本，这些文件描述符在执行fork时打开。对于每个进程，操作系统内核在u_block结构中维护文件描述符表，所有的文件描述符都在该表中建立索引。
+
+---
+### 1. 子进程和父进程都可以访问open()返回的文件描述符吗？
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <sys/wait.h>
+    #include <fcntl.h>
+    #include <string.h>
+
+    int main()
+    {
+        //在当前路径打开一个文件，文件名为out	
+        int fid;	
+        fid = open("./out", O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU); 
+        
+        pid_t rc = fork(); /*创建一个子进程*/
+        
+        if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        }
+        else if(rc == 0) /*子进程*/
+        {
+            char* str1 = "Child process.\n";
+            write(fid, str1, strlen(str1));
+        }
+        else /*父进程*/
+        {                  
+            char* str2 = "Parent process.\n";
+            write(fid, str2, strlen(str2));
+        }
+
+        return 0;
+    }
+
+
+运行结果
+
+    cfm@cfm-virtual-machine:~/os-lab/lab2$ gcc ex2.c -o ex2
+    cfm@cfm-virtual-machine:~/os-lab/lab2$ ./ex2
+    cfm@cfm-virtual-machine:~/os-lab/lab2$ cat out
+    Parent process.
+    Child process.
+
+out文件中既有父进程写的内容，也有子进程写的内容，说明两个进程都可以访问open()返回的文件描述符。
+
+### 2. 当它们并发写入文件时（使用write()系统调用），会发生什么？
+**测试1**：父进程写完子进程写？子进程写完父进程写？
+
+前面程序的结果是父进程先写，子进程后写。如果在父进程分支里，写文件之前加上 
+
+    sleep(1);
+
+就可以使子进程先写，父进程后写。
+
+**测试2**：可否交替进行？
+
+**设计**：写多行文本，子进程和父进程速度不同。
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <sys/wait.h>
+    #include <fcntl.h>
+    #include <string.h>
+
+    #define N 10
+
+    int main()
+    {
+        int fid;		
+        fid = open("./out", O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+        
+        pid_t rc = fork();
+        
+        if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        }
+        else if(rc == 0)
+        {
+            int j;
+            char* str1 = "Child process.\n";
+            
+            for (j=0; j<N; j++)
+            {      	
+                write(fid, str1, strlen(str1));
+              //sleep(0.0001);   /*子进程写的速度快些*/
+            }
+        }
+        else
+        {
+    //		printf("%d\n", wait(NULL));
+                    
+            int i;
+            char* str2 = "Parent process.\n";
+        
+            for (i = 0; i<N; i++)
+            {	
+                write(fid, str2, strlen(str2));
+                sleep(0.2);     /*父进程写的速度慢些*/
+            }
+        }
+
+        return 0;
+    }
+
+
+**结果**：
+若父进程每写一行后sleep 0.2s，子进程不sleep，结果为：
+
+    Parent process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Child process.
+    Parent process.
+    Parent process.
+    Parent process.
+    Parent process.
+    Parent process.
+    Parent process.
+    Parent process.
+    Parent process.
+    Parent process.
+
+若父进程每写一行后sleep 0.2s，子进程每写一行后sleep 0.1s，结果为：
+
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+    Parent process.
+    Child process.
+
+说明父进程和子进程是并发执行的，可以交替的对同一个文件写数据。执行哪个进程取决于CPU调度情况。
+
+
+### 3. 如何保证子进程始终先写？你能否不在父进程调用wait()而做到这一点呢？
+
+在父进程中调用wait(NULL)，可以保证子进程先写。
+
+如果不调用wait(), 在父进程分支里，写文件之前加上 
+
+    sleep(1);
+
+让父进程先阻塞一段时间，也可以使子进程先写，父进程后写。
+
+### 4. 在父进程中使用wait()，等待子进程完成。wait()返回什么？如果你在子进程中使用wait()会发生什么？
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <sys/wait.h>
+    #include <fcntl.h>
+    #include <string.h>
+
+    #define N 10
+
+    int main()
+    {
+        int fid;		
+        fid = open("./out", O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+        
+        pid_t rc = fork();
+        
+        if(rc < 0)
+        {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        }
+        else if(rc == 0)
+        {
+            printf("Child pid = %d\n", getpid());
+            printf("Child wait = %d\n", wait(NULL));
+
+            int j;
+            char* str1 = "Child process.\n";
+            for (j=0; j<N; j++)
+            {      	
+                write(fid, str1, strlen(str1));
+                sleep(0.1);
+            }
+        }
+        else
+        {
+            printf("Parent wait = %d\n", wait(NULL));
+                    
+            int i;
+            char* str2 = "Parent process.\n";
+        
+            for (i = 0; i<N; i++)
+            {	
+                write(fid, str2, strlen(str2));
+                sleep(0.2);
+            }
+        }
+
+
+        return 0;
+    }
+
+**结果**
+
+    Child pid = 3598
+    Child wait = -1
+    Parent wait = 3598
+
+因此父进程里的wait()返回值为子进程的id，子进程里调用wait()返回-1。
